@@ -58,9 +58,12 @@ class PriceTracker {
             <div class="crypto-card">
                 <div class="crypto-header">
                     <span class="crypto-symbol">${crypto.symbol}</span>
-                    <span class="crypto-price ${crypto.price === 'Loading...' || crypto.price === 'Error' ? 'loading' : ''}">${this.formatPrice(crypto.price)}</span>
+                    <span class="crypto-price ${this.getPriceClass(crypto.price)}">${this.formatPrice(crypto.price)}</span>
                 </div>
-                <button onclick="tracker.removeCrypto('${crypto.symbol}')" style="background: #e53e3e; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">Remove</button>
+                <div class="crypto-meta">
+                    Last updated: ${this.formatTime(crypto.lastUpdated)}
+                </div>
+                <button onclick="tracker.removeCrypto('${crypto.symbol}')" class="remove-btn">Remove</button>
             </div>
         `).join('');
     }
@@ -133,6 +136,18 @@ class PriceTracker {
             return `$${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 6 })}`;
         }
         return price;
+    }
+
+    getPriceClass(price) {
+        if (price === 'Loading...') return 'loading';
+        if (price === 'Error') return 'error';
+        return '';
+    }
+
+    formatTime(dateString) {
+        if (!dateString) return 'Never';
+        const date = new Date(dateString);
+        return date.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
     }
 }
 

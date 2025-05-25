@@ -120,4 +120,31 @@ main {
 .loading {
     color: #a0aec0;
     font-style: italic;
+    font-size: 1rem;
+}
+
+.error {
+    color: #e53e3e;
+    font-size: 1rem;
+}
+
+.remove-btn {
+    background: #e53e3e;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background 0.3s;
+}
+
+.remove-btn:hover {
+    background: #c53030;
+}
+
+.crypto-meta {
+    font-size: 0.8rem;
+    color: #718096;
+    margin-top: 5px;
 }
