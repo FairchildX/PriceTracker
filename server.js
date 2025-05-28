@@ -1,10 +1,11 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const path = require('path');
+const config = require('./config');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -17,7 +18,7 @@ app.get('/', (req, res) => {
 app.get('/api/price/:symbol', async (req, res) => {
     try {
         const { symbol } = req.params;
-        const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${symbol.toLowerCase()}&vs_currencies=usd`);
+        const response = await axios.get(`${config.api.coingecko.baseUrl}/simple/price?ids=${symbol.toLowerCase()}&vs_currencies=usd`);
 
         const symbolLower = symbol.toLowerCase();
         if (response.data[symbolLower]) {
@@ -42,7 +43,7 @@ app.get('/api/prices', async (req, res) => {
         }
 
         const symbolsQuery = symbols.map(s => s.toLowerCase()).join(',');
-        const response = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${symbolsQuery}&vs_currencies=usd`);
+        const response = await axios.get(`${config.api.coingecko.baseUrl}/simple/price?ids=${symbolsQuery}&vs_currencies=usd`);
 
         const prices = symbols.map(symbol => {
             const symbolLower = symbol.toLowerCase();
@@ -59,6 +60,7 @@ app.get('/api/prices', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+app.listen(config.server.port, () => {
+    console.log(`Server running on port ${config.server.port}`);
+    console.log(`Environment: ${config.server.nodeEnv}`);
 });
