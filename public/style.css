@@ -51,7 +51,7 @@ main {
     margin-bottom: 30px;
 }
 
-#crypto-input {
+#crypto-input, #alert-input {
     flex: 1;
     padding: 12px 15px;
     border: 2px solid #e2e8f0;
@@ -59,7 +59,11 @@ main {
     font-size: 16px;
 }
 
-#crypto-input:focus {
+#alert-input {
+    flex: 0.7;
+}
+
+#crypto-input:focus, #alert-input:focus {
     outline: none;
     border-color: #667eea;
 }
@@ -147,4 +151,27 @@ main {
     font-size: 0.8rem;
     color: #718096;
     margin-top: 5px;
+}
+
+.alert-active {
+    border-left-color: #f56565 !important;
+}
+
+.alert-indicator {
+    background: #f56565;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    margin-left: 10px;
+}
+
+.price-alert {
+    background: #fed7d7;
+    border: 1px solid #fc8181;
+    color: #c53030;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    margin-top: 8px;
 }

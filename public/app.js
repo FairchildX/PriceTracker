@@ -24,7 +24,9 @@ class PriceTracker {
 
     addCrypto() {
         const input = document.getElementById('crypto-input');
+        const alertInput = document.getElementById('alert-input');
         const symbol = input.value.trim().toUpperCase();
+        const alertPrice = parseFloat(alertInput.value) || null;
 
         if (!symbol) return;
 
@@ -36,6 +38,8 @@ class PriceTracker {
         const crypto = {
             symbol: symbol,
             price: 'Loading...',
+            alertPrice: alertPrice,
+            alertTriggered: false,
             lastUpdated: new Date()
         };
 
@@ -44,6 +48,7 @@ class PriceTracker {
         this.saveCryptos();
         this.fetchPrice(symbol);
         input.value = '';
+        alertInput.value = '';
     }
 
     renderCryptos() {
@@ -55,14 +60,18 @@ class PriceTracker {
         }
 
         container.innerHTML = this.cryptos.map(crypto => `
-            <div class="crypto-card">
+            <div class="crypto-card ${crypto.alertPrice && crypto.alertTriggered ? 'alert-active' : ''}">
                 <div class="crypto-header">
-                    <span class="crypto-symbol">${crypto.symbol}</span>
+                    <span class="crypto-symbol">
+                        ${crypto.symbol}
+                        ${crypto.alertPrice ? `<span class="alert-indicator">Alert: $${crypto.alertPrice}</span>` : ''}
+                    </span>
                     <span class="crypto-price ${this.getPriceClass(crypto.price)}">${this.formatPrice(crypto.price)}</span>
                 </div>
                 <div class="crypto-meta">
                     Last updated: ${this.formatTime(crypto.lastUpdated)}
                 </div>
+                ${crypto.alertTriggered ? `<div class="price-alert">🚨 Price alert triggered!</div>` : ''}
                 <button onclick="tracker.removeCrypto('${crypto.symbol}')" class="remove-btn">Remove</button>
             </div>
         `).join('');
@@ -94,8 +103,11 @@ class PriceTracker {
             if (response.ok) {
                 const crypto = this.cryptos.find(c => c.symbol === symbol);
                 if (crypto) {
+                    const oldPrice = crypto.price;
                     crypto.price = data.price;
                     crypto.lastUpdated = new Date();
+
+                    this.checkPriceAlert(crypto, oldPrice);
                     this.renderCryptos();
                     this.saveCryptos();
                 }
@@ -148,6 +160,35 @@ class PriceTracker {
         if (!dateString) return 'Never';
         const date = new Date(dateString);
         return date.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit' });
+    }
+
+    checkPriceAlert(crypto, oldPrice) {
+        if (!crypto.alertPrice || typeof crypto.price !== 'number') return;
+
+        const wasBelow = typeof oldPrice === 'number' && oldPrice < crypto.alertPrice;
+        const isNowAbove = crypto.price >= crypto.alertPrice;
+        const wasAbove = typeof oldPrice === 'number' && oldPrice >= crypto.alertPrice;
+        const isNowBelow = crypto.price < crypto.alertPrice;
+
+        if ((wasBelow && isNowAbove) || (wasAbove && isNowBelow)) {
+            crypto.alertTriggered = true;
+            this.showNotification(`${crypto.symbol} price alert!`,
+                `${crypto.symbol} is now $${crypto.price} (target: $${crypto.alertPrice})`);
+        }
+    }
+
+    showNotification(title, message) {
+        if (Notification.permission === 'granted') {
+            new Notification(title, { body: message });
+        } else if (Notification.permission !== 'denied') {
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    new Notification(title, { body: message });
+                }
+            });
+        }
+
+        alert(`${title}\n${message}`);
     }
 }
 
