@@ -175,3 +175,56 @@ main {
     font-size: 0.8rem;
     margin-top: 8px;
 }
+
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    header h1 {
+        font-size: 2rem;
+    }
+
+    main {
+        padding: 20px;
+    }
+
+    .input-group {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    #crypto-input, #alert-input {
+        flex: none;
+        width: 100%;
+    }
+
+    #add-btn {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .crypto-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .crypto-symbol {
+        font-size: 1rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .crypto-price {
+        font-size: 1.3rem;
+        align-self: flex-end;
+    }
+
+    .alert-indicator {
+        font-size: 0.65rem;
+        padding: 1px 4px;
+    }
+}
